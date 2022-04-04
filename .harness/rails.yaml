@@ -48,7 +48,9 @@ pipeline:
                                     connectorRef: org.Dockerhub
                                     image: ruby:3.1.0
                                     shell: Sh
-                                    command: bin/rails db:setup
+                                    command: |-
+                                        bundle install
+                                        bin/rails db:setup
                                     envVariables:
                                         RAILS_ENV: test
                                         PGHOST: localhost
