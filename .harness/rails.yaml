@@ -32,7 +32,8 @@ pipeline:
                             image: postgres:11-alpine
                             privileged: true
                             envVariables:
-                                POSTGRES_USER: postgres
+                                PGUSER: postgres
+                                PGPORT: "5432"
                             args:
                                 - --health-cmd pg_isready
                                 - --health-interval 10s
