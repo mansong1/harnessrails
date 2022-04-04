@@ -30,10 +30,10 @@ pipeline:
                         spec:
                             connectorRef: org.Dockerhub
                             image: postgres:11-alpine
-                            privileged: true
+                            privileged: false
                             envVariables:
-                                PGUSER: postgres
-                                PGPORT: "5432"
+                                POSTGRES_USER: postgres
+                                POSTGRES_PASSWORD: postgres
                             args:
                                 - --health-cmd pg_isready
                                 - --health-interval 10s
