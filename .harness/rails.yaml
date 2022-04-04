@@ -43,22 +43,15 @@ pipeline:
                       steps:
                           - step:
                                 type: Run
-                                name: Install Gems
-                                identifier: Install_Gems
-                                spec:
-                                    connectorRef: org.Dockerhub
-                                    image: ruby:3.1.0
-                                    shell: Sh
-                                    command: bundle install
-                          - step:
-                                type: Run
                                 name: Setup DB
                                 identifier: Setup_DB
                                 spec:
                                     connectorRef: org.Dockerhub
                                     image: ruby:3.1.0
                                     shell: Sh
-                                    command: bin/rails db:setup
+                                    command: |-
+                                        bundle install
+                                        bin/rails db:setup
                                     envVariables:
                                         RAILS_ENV: test
                                         PGHOST: localhost
