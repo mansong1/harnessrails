@@ -63,5 +63,3 @@ pipeline:
                                         RAILS_ENV: test
                                         PGHOST: localhost
                                         PGUSER: postgres
-                  sharedPaths:
-                      - /harness
