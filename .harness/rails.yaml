@@ -1,0 +1,55 @@
+pipeline:
+    name: rails
+    identifier: rails
+    allowStageExecutions: false
+    projectIdentifier: Ruby
+    orgIdentifier: default
+    tags: {}
+    properties:
+        ci:
+            codebase:
+                connectorRef: org.Github
+                repoName: harnessrails
+                build: <+input>
+    stages:
+        - stage:
+              name: CI
+              identifier: CI
+              type: CI
+              spec:
+                  cloneCodebase: true
+                  infrastructure:
+                      type: KubernetesDirect
+                      spec:
+                          connectorRef: org.GKE
+                          namespace: harness-builds
+                  serviceDependencies:
+                      - identifier: PostGres
+                        name: PostGres
+                        type: Service
+                        spec:
+                            connectorRef: org.Dockerhub
+                            image: postgres:11-alpine
+                            privileged: true
+                            envVariables:
+                                POSTGRES_USER: postgres
+                            args:
+                                - --health-cmd pg_isready
+                                - --health-interval 10s
+                                - --health-timeout 5s
+                                - --health-retries 5s
+                  execution:
+                      steps:
+                          - step:
+                                type: Run
+                                name: Setup DB
+                                identifier: Setup_DB
+                                spec:
+                                    connectorRef: org.Dockerhub
+                                    image: ruby:3.1.0
+                                    shell: Sh
+                                    command: bin/rails db:setup
+                                    envVariables:
+                                        RAILS_ENV: test
+                                        PGHOST: localhost
+                                        PGUSER: postgres
