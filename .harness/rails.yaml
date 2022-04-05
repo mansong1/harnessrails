@@ -49,11 +49,7 @@ pipeline:
                                     connectorRef: org.Dockerhub
                                     image: pipelinecomponents/rubocop:latest
                                     shell: Sh
-                                    command: |-
-                                        gem install rubocop-junit-formatter
-                                        rubocop --require rubocop/formatter/checkstyle_formatter 
-                                        --format RuboCop::Formatter::CheckstyleFormatter 
-                                        --out report.xml
+                                    command: rubocop --format junit --out report.xml
                                     reports:
                                         type: JUnit
                                         spec:
