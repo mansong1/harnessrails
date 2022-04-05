@@ -39,6 +39,15 @@ pipeline:
                                 - --health-interval 10s
                                 - --health-timeout 5s
                                 - --health-retries 5s
+                      - identifier: DIND
+                        name: DIND
+                        type: Service
+                        spec:
+                            connectorRef: org.Dockerhub
+                            image: docker:dind
+                            privileged: true
+                            entrypoint:
+                                - dockerd-entrypoint.sh
                   execution:
                       steps:
                           - step:
@@ -57,6 +66,22 @@ pipeline:
                                                 - report.xml
                                 failureStrategies: []
                           - step:
+                                type: Security
+                                name: Brakeman Scan
+                                identifier: Brakeman_Scan
+                                spec:
+                                    connectorRef: account.harnessImage
+                                    privileged: true
+                                    settings:
+                                        policy_type: orchestratedScan
+                                        scan_type: repository
+                                        product_name: brakeman
+                                        product_config_name: brakeman-default
+                                        fail_on_severity: HIGH
+                                        repository_branch: <+codebase.branch>
+                                        repository_project: harnessrails
+                                    imagePullPolicy: Always
+                          - step:
                                 type: Run
                                 name: Setup DB
                                 identifier: Setup_DB
@@ -73,3 +98,5 @@ pipeline:
                                         POSTGRES_USER: postgres
                                         POSTGRES_PASSWORD: postgres
                                         DATABASE_URL: postgres://postgres:@localhost:5432/test
+                  sharedPaths:
+                      - /var/run
