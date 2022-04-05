@@ -43,15 +43,13 @@ pipeline:
                       steps:
                           - step:
                                 type: Run
-                                name: Rubocop
-                                identifier: Rubocop
+                                name: Linting
+                                identifier: Linting
                                 spec:
                                     connectorRef: org.Dockerhub
-                                    image: ruby:3.1.0
+                                    image: pipelinecomponents/rubocop:latest
                                     shell: Sh
-                                    command: |-
-                                        bundle install
-                                        bin/rubocop --parallel
+                                    command: rubocop  -P -E  .
                           - step:
                                 type: Run
                                 name: Setup DB
