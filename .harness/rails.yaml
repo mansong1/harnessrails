@@ -49,18 +49,13 @@ pipeline:
                                     connectorRef: org.Dockerhub
                                     image: pipelinecomponents/rubocop:latest
                                     shell: Sh
-                                    command: rubocop --format junit --out report.xml
+                                    command: rubocop --format junit --out report.xml || true
                                     reports:
                                         type: JUnit
                                         spec:
                                             paths:
                                                 - report.xml
-                                failureStrategies:
-                                    - onFailure:
-                                          errors:
-                                              - AllErrors
-                                          action:
-                                              type: Ignore
+                                failureStrategies: []
                           - step:
                                 type: Run
                                 name: Setup DB
