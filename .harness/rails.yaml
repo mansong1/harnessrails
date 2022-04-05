@@ -81,6 +81,7 @@ pipeline:
                                         repository_branch: <+codebase.branch>
                                         repository_project: harnessrails
                                     imagePullPolicy: Always
+                                failureStrategies: []
                           - step:
                                 type: Run
                                 name: Setup DB
