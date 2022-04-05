@@ -29,7 +29,7 @@ pipeline:
                         type: Service
                         spec:
                             connectorRef: org.Dockerhub
-                            image: postgres:11-alpine
+                            image: postgres:14-alpine
                             privileged: false
                             envVariables:
                                 POSTGRES_USER: postgres
