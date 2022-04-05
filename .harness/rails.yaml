@@ -82,6 +82,8 @@ pipeline:
                                         repository_project: harnessrails
                                     imagePullPolicy: Always
                                 failureStrategies: []
+                                when:
+                                    stageStatus: Failure
                           - step:
                                 type: Run
                                 name: Setup DB
