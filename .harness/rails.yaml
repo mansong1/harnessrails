@@ -48,6 +48,12 @@ pipeline:
                             privileged: true
                             entrypoint:
                                 - dockerd-entrypoint.sh
+                      - identifier: Redis
+                        name: Redis
+                        type: Service
+                        spec:
+                            connectorRef: org.Dockerhub
+                            image: redis:latest
                   execution:
                       steps:
                           - step:
