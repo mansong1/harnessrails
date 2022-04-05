@@ -101,3 +101,7 @@ pipeline:
                                         DATABASE_URL: postgres://postgres:@localhost:5432/test
                   sharedPaths:
                       - /var/run
+              variables:
+                  - name: api_domain_name
+                    type: String
+                    value: https://api.sto.harness.io
