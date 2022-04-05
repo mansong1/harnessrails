@@ -55,6 +55,12 @@ pipeline:
                                         spec:
                                             paths:
                                                 - report.xml
+                                failureStrategies:
+                                    - onFailure:
+                                          errors:
+                                              - AllErrors
+                                          action:
+                                              type: Ignore
                           - step:
                                 type: Run
                                 name: Setup DB
