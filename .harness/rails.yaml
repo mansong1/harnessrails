@@ -43,6 +43,17 @@ pipeline:
                       steps:
                           - step:
                                 type: Run
+                                name: Rubocop
+                                identifier: Rubocop
+                                spec:
+                                    connectorRef: org.Dockerhub
+                                    image: ruby:3.1.0
+                                    shell: Sh
+                                    command: |-
+                                        bundle install
+                                        bin/rubocop --parallel
+                          - step:
+                                type: Run
                                 name: Setup DB
                                 identifier: Setup_DB
                                 spec:
