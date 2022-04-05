@@ -57,7 +57,13 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: harnessrails_test
+  database: test
+  host: localhost
+  encoding: unicode
+  username: <%= ENV["POSTGRES_USER"] %>
+  password: <%= ENV["POSTGRES_PASSWORD"] %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -82,5 +88,5 @@ test:
 production:
   <<: *default
   database: harnessrails_production
-  username: harnessrails
-  password: <%= ENV["HARNESSRAILS_DATABASE_PASSWORD"] %>
+  username: <%= ENV["POSTGRES_USER"] %>
+  password: <%= ENV["POSTGRES_PASSWORD"] %>
