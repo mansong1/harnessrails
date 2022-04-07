@@ -34,12 +34,15 @@ pipeline:
                             envVariables:
                                 POSTGRES_USER: postgres
                                 POSTGRES_PASSWORD: postgres
+                            entrypoint:
+                                - docker-entrypoint.sh
                             args:
                                 - --health-cmd pg_isready
                                 - --health-interval 10s
                                 - --health-timeout 5s
                                 - --health-retries 5s
                                 - --port 5432
+                            imagePullPolicy: Always
                       - identifier: DIND
                         name: DIND
                         type: Service
