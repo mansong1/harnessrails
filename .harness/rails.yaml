@@ -116,6 +116,15 @@ pipeline:
                                         RAILS_ENV: test
                                         POSTGRES_USER: postgres
                                         POSTGRES_PASSWORD: postgres
+                          - step:
+                                type: Run
+                                name: Migrate DB
+                                identifier: Migrate_DB
+                                spec:
+                                    connectorRef: org.Dockerhub
+                                    image: ruby:3.1.0
+                                    shell: Sh
+                                    command: bundle
                   sharedPaths:
                       - /var/run
               variables:
