@@ -84,7 +84,7 @@ pipeline:
                                       failureStrategies: []
                                 - step:
                                       type: Run
-                                      name: Audit
+                                      name: Bundler Audit
                                       identifier: Audit
                                       spec:
                                           connectorRef: org.Dockerhub
