@@ -39,6 +39,7 @@ pipeline:
                                 - --health-interval 10s
                                 - --health-timeout 5s
                                 - --health-retries 5s
+                                - --port 5432
                       - identifier: DIND
                         name: DIND
                         type: Service
