@@ -35,6 +35,7 @@ pipeline:
                             envVariables:
                                 POSTGRES_USER: postgres
                                 POSTGRES_PASSWORD: postgres
+                                POSTGRES_DB: test
                             imagePullPolicy: Always
                       - identifier: DIND
                         name: DIND
