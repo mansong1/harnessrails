@@ -66,21 +66,31 @@ pipeline:
                                         psql -U postgres -d test -h localhost
                                     envVariables:
                                         PGPASSWORD: postgres
-                          - step:
-                                type: Run
-                                name: Linting
-                                identifier: Linting
-                                spec:
-                                    connectorRef: org.Dockerhub
-                                    image: pipelinecomponents/rubocop:latest
-                                    shell: Sh
-                                    command: rubocop --format junit --out report.xml || true
-                                    reports:
-                                        type: JUnit
-                                        spec:
-                                            paths:
-                                                - report.xml
-                                failureStrategies: []
+                          - parallel:
+                                - step:
+                                      type: Run
+                                      name: Linting
+                                      identifier: Linting
+                                      spec:
+                                          connectorRef: org.Dockerhub
+                                          image: pipelinecomponents/rubocop:latest
+                                          shell: Sh
+                                          command: rubocop --format junit --out report.xml || true
+                                          reports:
+                                              type: JUnit
+                                              spec:
+                                                  paths:
+                                                      - report.xml
+                                      failureStrategies: []
+                                - step:
+                                      type: Run
+                                      name: Audit
+                                      identifier: Audit
+                                      spec:
+                                          connectorRef: org.Dockerhub
+                                          image: airhelp/bundler-audit
+                                          shell: Sh
+                                          command: bin/bundler-audit --update
                           - step:
                                 type: Security
                                 name: Brakeman Scan
