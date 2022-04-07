@@ -91,7 +91,7 @@ pipeline:
                                           connectorRef: org.Dockerhub
                                           image: airhelp/bundler-audit:latest
                                           shell: Sh
-                                          command: bin/bundler-audit --update
+                                          command: bundler-audit --update
                           - step:
                                 type: Security
                                 name: Brakeman Scan
