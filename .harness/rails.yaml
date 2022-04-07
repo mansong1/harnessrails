@@ -36,11 +36,6 @@ pipeline:
                                 POSTGRES_USER: postgres
                                 POSTGRES_PASSWORD: postgres
                                 POSTGRES_DB: test
-                            args:
-                                - --health-cmd pg_isready
-                                - --health-interval 10s
-                                - --health-timeout 5s
-                                - --health-retries 5s
                             imagePullPolicy: Always
                       - identifier: DIND
                         name: DIND
