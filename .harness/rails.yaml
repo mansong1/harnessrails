@@ -111,7 +111,6 @@ pipeline:
                                         RAILS_ENV: test
                                         POSTGRES_USER: postgres
                                         POSTGRES_PASSWORD: postgres
-                                        DATABASE_URL: postgres://postgres:@localhost/test
                   sharedPaths:
                       - /var/run
               variables:
