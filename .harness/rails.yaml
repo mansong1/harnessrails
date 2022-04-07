@@ -137,6 +137,10 @@ pipeline:
                                     command: |-
                                         bundle install --jobs 4 --retry 3
                                         bundle exec rails db:migrate
+                                    envVariables:
+                                        RAILS_ENV: test
+                                        POSTGRES_USER: postgres
+                                        POSTGRES_PASSWORD: postgres
                           - step:
                                 type: Run
                                 name: Test
@@ -150,6 +154,8 @@ pipeline:
                                         bundle exec rake
                                     envVariables:
                                         RAILS_ENV: test
+                                        POSTGRES_USER: postgres
+                                        POSTGRES_PASSWORD: postgres
                   sharedPaths:
                       - /var/run
               variables:
