@@ -23,7 +23,6 @@ pipeline:
                       spec:
                           connectorRef: org.GKE
                           namespace: harness-builds
-                          automountServiceAccountToken: true
                   serviceDependencies:
                       - identifier: PostGres
                         name: PostGres
