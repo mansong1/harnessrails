@@ -134,7 +134,22 @@ pipeline:
                                     connectorRef: org.Dockerhub
                                     image: ruby:3.1.0
                                     shell: Sh
-                                    command: bundle exec rails db:migrate
+                                    command: |-
+                                        bundle install --jobs 4 --retry 3
+                                        bundle exec rails db:migrate
+                          - step:
+                                type: Run
+                                name: Test
+                                identifier: Test
+                                spec:
+                                    connectorRef: org.Dockerhub
+                                    image: ruby:3.1.0
+                                    shell: Sh
+                                    command: |-
+                                        bundle install --jobs 4 --retry 3
+                                        bundle exec rake
+                                    envVariables:
+                                        RAILS_ENV: test
                   sharedPaths:
                       - /var/run
               variables:
