@@ -30,7 +30,7 @@ pipeline:
                         type: Service
                         spec:
                             connectorRef: org.Dockerhub
-                            image: postgres:14-alpine
+                            image: postgres:9-alpine
                             privileged: false
                             envVariables:
                                 POSTGRES_USER: postgres
@@ -41,7 +41,6 @@ pipeline:
                                 - --health-interval 10s
                                 - --health-timeout 5s
                                 - --health-retries 5s
-                                - --port 5432
                             imagePullPolicy: Always
                       - identifier: DIND
                         name: DIND
