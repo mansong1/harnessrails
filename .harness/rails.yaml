@@ -23,6 +23,7 @@ pipeline:
                       spec:
                           connectorRef: org.GKE
                           namespace: harness-builds
+                          automountServiceAccountToken: true
                   serviceDependencies:
                       - identifier: PostGres
                         name: PostGres
@@ -110,7 +111,7 @@ pipeline:
                                         RAILS_ENV: test
                                         POSTGRES_USER: postgres
                                         POSTGRES_PASSWORD: postgres
-                                        DATABASE_URL: postgres://postgres:@localhost:5432/test
+                                        DATABASE_URL: postgres://postgres:@localhost/test
                   sharedPaths:
                       - /var/run
               variables:
