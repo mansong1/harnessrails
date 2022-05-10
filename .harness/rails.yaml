@@ -23,6 +23,7 @@ pipeline:
                       spec:
                           connectorRef: org.GKE
                           namespace: harness-builds
+                          automountServiceAccountToken: true
                   serviceDependencies:
                       - identifier: PostGres
                         name: PostGres
@@ -64,6 +65,9 @@ pipeline:
                                     command: |-
                                         sleep 10
                                         psql -U postgres -d test -h localhost
+
+                                        env
+                                        echo ${DRONE_REPO_BRANCH}
                                     envVariables:
                                         PGPASSWORD: postgres
                           - parallel:
