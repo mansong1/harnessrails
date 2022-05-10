@@ -1,0 +1,9 @@
+overlayInputSet:
+    name: Test
+    identifier: Test
+    orgIdentifier: default
+    projectIdentifier: Ruby
+    pipelineIdentifier: rails
+    inputSetReferences:
+        - main
+    tags: {}
