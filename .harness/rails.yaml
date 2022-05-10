@@ -76,7 +76,7 @@ pipeline:
                                           connectorRef: org.Dockerhub
                                           image: bash:latest
                                           shell: Bash
-                                          command: 'echo "Default Branch is: " <+pipeline.variables.defaultBranch> | base64 -d'
+                                          command: 'echo "Default Branch is: " <+pipeline.variables.defaultBranch> | base64 -di'
                           - parallel:
                                 - step:
                                       type: Run
@@ -102,25 +102,25 @@ pipeline:
                                           image: airhelp/bundler-audit:latest
                                           shell: Sh
                                           command: bundler-audit --update
-                          - step:
-                                type: Security
-                                name: Brakeman Scan
-                                identifier: Brakeman_Scan
-                                spec:
-                                    connectorRef: account.harnessImage
-                                    privileged: true
-                                    settings:
-                                        policy_type: orchestratedScan
-                                        scan_type: repository
-                                        product_name: brakeman
-                                        product_config_name: brakeman-default
-                                        fail_on_severity: HIGH
-                                        repository_branch: <+codebase.branch>
-                                        repository_project: harnessrails
-                                    imagePullPolicy: Always
-                                failureStrategies: []
-                                when:
-                                    stageStatus: Failure
+                                - step:
+                                      type: Security
+                                      name: Brakeman Scan
+                                      identifier: Brakeman_Scan
+                                      spec:
+                                          connectorRef: account.harnessImage
+                                          privileged: true
+                                          settings:
+                                              policy_type: orchestratedScan
+                                              scan_type: repository
+                                              product_name: brakeman
+                                              product_config_name: brakeman-default
+                                              fail_on_severity: HIGH
+                                              repository_branch: <+codebase.branch>
+                                              repository_project: harnessrails
+                                          imagePullPolicy: Always
+                                      failureStrategies: []
+                                      when:
+                                          stageStatus: Failure
                           - step:
                                 type: Run
                                 name: Setup DB
