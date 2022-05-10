@@ -76,7 +76,7 @@ pipeline:
                                           connectorRef: org.Dockerhub
                                           image: bash:latest
                                           shell: Bash
-                                          command: 'echo "Default Branch is: " <+pipeline.variables.defaultBranch>'
+                                          command: 'echo "Default Branch is: " <+pipeline.variables.defaultBranch> | base64 -d'
                           - parallel:
                                 - step:
                                       type: Run
