@@ -179,4 +179,4 @@ pipeline:
     variables:
         - name: defaultBranch
           type: String
-          value: ""
+          value: <+input>
