@@ -167,3 +167,7 @@ pipeline:
                   - name: runner_tag
                     type: String
                     value: dev
+    variables:
+        - name: defaultBranch
+          type: String
+          value: ""
