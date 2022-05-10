@@ -85,9 +85,7 @@ pipeline:
                                           connectorRef: org.Dockerhub
                                           image: pipelinecomponents/rubocop:latest
                                           shell: Sh
-                                          command: |-
-                                              env
-                                              rubocop --format junit --out report.xml || true
+                                          command: rubocop --format junit --out report.xml || true
                                           reports:
                                               type: JUnit
                                               spec:
