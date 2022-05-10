@@ -54,28 +54,29 @@ pipeline:
                             image: redis:latest
                   execution:
                       steps:
-                          - step:
-                                type: Run
-                                name: Check postgres
-                                identifier: Check_postgres
-                                spec:
-                                    connectorRef: org.Dockerhub
-                                    image: postgres:9-alpine
-                                    shell: Sh
-                                    command: |-
-                                        sleep 10
-                                        psql -U postgres -d test -h localhost
-                                    envVariables:
-                                        PGPASSWORD: postgres
-                          - step:
-                                type: Run
-                                name: defaultBranch
-                                identifier: defaultBranch
-                                spec:
-                                    connectorRef: org.Dockerhub
-                                    image: bash:latest
-                                    shell: Bash
-                                    command: 'echo "Default Branch is: " <+pipeline.variables.defaultBranch>'
+                          - parallel:
+                                - step:
+                                      type: Run
+                                      name: Check postgres
+                                      identifier: Check_postgres
+                                      spec:
+                                          connectorRef: org.Dockerhub
+                                          image: postgres:9-alpine
+                                          shell: Sh
+                                          command: |-
+                                              sleep 10
+                                              psql -U postgres -d test -h localhost
+                                          envVariables:
+                                              PGPASSWORD: postgres
+                                - step:
+                                      type: Run
+                                      name: defaultBranch
+                                      identifier: defaultBranch
+                                      spec:
+                                          connectorRef: org.Dockerhub
+                                          image: bash:latest
+                                          shell: Bash
+                                          command: 'echo "Default Branch is: " <+pipeline.variables.defaultBranch>'
                           - parallel:
                                 - step:
                                       type: Run
