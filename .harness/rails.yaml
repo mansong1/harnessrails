@@ -67,6 +67,15 @@ pipeline:
                                         psql -U postgres -d test -h localhost
                                     envVariables:
                                         PGPASSWORD: postgres
+                          - step:
+                                type: Run
+                                name: defaultBranch
+                                identifier: defaultBranch
+                                spec:
+                                    connectorRef: org.Dockerhub
+                                    image: bash:latest
+                                    shell: Bash
+                                    command: 'echo "Default Branch is: " <+pipeline.variables.defaultBranch>'
                           - parallel:
                                 - step:
                                       type: Run
