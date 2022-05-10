@@ -65,9 +65,6 @@ pipeline:
                                     command: |-
                                         sleep 10
                                         psql -U postgres -d test -h localhost
-
-                                        env
-                                        echo ${DRONE_REPO_BRANCH}
                                     envVariables:
                                         PGPASSWORD: postgres
                           - parallel:
@@ -79,7 +76,9 @@ pipeline:
                                           connectorRef: org.Dockerhub
                                           image: pipelinecomponents/rubocop:latest
                                           shell: Sh
-                                          command: rubocop --format junit --out report.xml || true
+                                          command: |-
+                                              env
+                                              rubocop --format junit --out report.xml || true
                                           reports:
                                               type: JUnit
                                               spec:
