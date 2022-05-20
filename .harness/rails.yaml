@@ -54,29 +54,19 @@ pipeline:
                             image: redis:latest
                   execution:
                       steps:
-                          - parallel:
-                                - step:
-                                      type: Run
-                                      name: Check postgres
-                                      identifier: Check_postgres
-                                      spec:
-                                          connectorRef: org.Dockerhub
-                                          image: postgres:9-alpine
-                                          shell: Sh
-                                          command: |-
-                                              sleep 10
-                                              psql -U postgres -d test -h localhost
-                                          envVariables:
-                                              PGPASSWORD: postgres
-                                - step:
-                                      type: Run
-                                      name: defaultBranch
-                                      identifier: defaultBranch
-                                      spec:
-                                          connectorRef: org.Dockerhub
-                                          image: bash:latest
-                                          shell: Bash
-                                          command: 'echo "Default Branch is: " <+pipeline.variables.defaultBranch> | base64 -di'
+                          - step:
+                                type: Run
+                                name: Check postgres
+                                identifier: Check_postgres
+                                spec:
+                                    connectorRef: org.Dockerhub
+                                    image: postgres:9-alpine
+                                    shell: Sh
+                                    command: |-
+                                        sleep 10
+                                        psql -U postgres -d test -h localhost
+                                    envVariables:
+                                        PGPASSWORD: postgres
                           - parallel:
                                 - step:
                                       type: Run
