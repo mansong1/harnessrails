@@ -147,14 +147,5 @@ pipeline:
                       POSTGRES_PASSWORD: postgres
           sharedPaths:
             - /var/run
-        variables:
-          - name: api_domain_name
-            type: String
-            value: https://api.sto.harness.io
-          - name: runner_tag
-            type: String
-            value: dev
-  variables:
-    - name: defaultBranch
-      type: String
-      value: <+input>
+        variables: []
+  variables: []
