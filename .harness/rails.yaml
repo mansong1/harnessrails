@@ -1,171 +1,160 @@
 pipeline:
-    name: rails
-    identifier: rails
-    allowStageExecutions: false
-    projectIdentifier: Ruby
-    orgIdentifier: default
-    tags: {}
-    properties:
-        ci:
-            codebase:
-                connectorRef: org.Github
-                repoName: harnessrails
-                build: <+input>
-    stages:
-        - stage:
-              name: CI
-              identifier: CI
-              type: CI
+  name: rails
+  identifier: rails
+  allowStageExecutions: false
+  projectIdentifier: Ruby
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: org.Github
+        repoName: harnessrails
+        build: <+input>
+  stages:
+    - stage:
+        name: CI
+        identifier: CI
+        type: CI
+        spec:
+          cloneCodebase: true
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: org.GKE
+              namespace: harness-builds
+              automountServiceAccountToken: true
+          serviceDependencies:
+            - identifier: PostGres
+              name: PostGres
+              type: Service
               spec:
-                  cloneCodebase: true
-                  infrastructure:
-                      type: KubernetesDirect
+                connectorRef: org.Dockerhub
+                image: postgres:9-alpine
+                privileged: false
+                envVariables:
+                  POSTGRES_USER: postgres
+                  POSTGRES_PASSWORD: postgres
+                  POSTGRES_DB: test
+                imagePullPolicy: Always
+            - identifier: DIND
+              name: DIND
+              type: Service
+              spec:
+                connectorRef: org.Dockerhub
+                image: docker:dind
+                privileged: true
+                entrypoint:
+                  - dockerd-entrypoint.sh
+            - identifier: Redis
+              name: Redis
+              type: Service
+              spec:
+                connectorRef: org.Dockerhub
+                image: redis:latest
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Check postgres
+                  identifier: Check_postgres
+                  spec:
+                    connectorRef: org.Dockerhub
+                    image: postgres:9-alpine
+                    shell: Sh
+                    command: |-
+                      sleep 10
+                      psql -U postgres -d test -h localhost
+                    envVariables:
+                      PGPASSWORD: postgres
+              - parallel:
+                  - step:
+                      type: Run
+                      name: Linting
+                      identifier: Linting
                       spec:
-                          connectorRef: org.GKE
-                          namespace: harness-builds
-                          automountServiceAccountToken: true
-                  serviceDependencies:
-                      - identifier: PostGres
-                        name: PostGres
-                        type: Service
-                        spec:
-                            connectorRef: org.Dockerhub
-                            image: postgres:9-alpine
-                            privileged: false
-                            envVariables:
-                                POSTGRES_USER: postgres
-                                POSTGRES_PASSWORD: postgres
-                                POSTGRES_DB: test
-                            imagePullPolicy: Always
-                      - identifier: DIND
-                        name: DIND
-                        type: Service
-                        spec:
-                            connectorRef: org.Dockerhub
-                            image: docker:dind
-                            privileged: true
-                            entrypoint:
-                                - dockerd-entrypoint.sh
-                      - identifier: Redis
-                        name: Redis
-                        type: Service
-                        spec:
-                            connectorRef: org.Dockerhub
-                            image: redis:latest
-                  execution:
-                      steps:
-                          - step:
-                                type: Run
-                                name: Check postgres
-                                identifier: Check_postgres
-                                spec:
-                                    connectorRef: org.Dockerhub
-                                    image: postgres:9-alpine
-                                    shell: Sh
-                                    command: |-
-                                        sleep 10
-                                        psql -U postgres -d test -h localhost
-                                    envVariables:
-                                        PGPASSWORD: postgres
-                          - parallel:
-                                - step:
-                                      type: Run
-                                      name: Linting
-                                      identifier: Linting
-                                      spec:
-                                          connectorRef: org.Dockerhub
-                                          image: pipelinecomponents/rubocop:latest
-                                          shell: Sh
-                                          command: rubocop --format junit --out report.xml || true
-                                          reports:
-                                              type: JUnit
-                                              spec:
-                                                  paths:
-                                                      - report.xml
-                                      failureStrategies: []
-                                - step:
-                                      type: Run
-                                      name: Bundler Audit
-                                      identifier: Audit
-                                      spec:
-                                          connectorRef: org.Dockerhub
-                                          image: airhelp/bundler-audit:latest
-                                          shell: Sh
-                                          command: bundler-audit --update
-                                - step:
-                                      type: Security
-                                      name: Brakeman Scan
-                                      identifier: Brakeman_Scan
-                                      spec:
-                                          connectorRef: account.harnessImage
-                                          privileged: true
-                                          settings:
-                                              policy_type: orchestratedScan
-                                              scan_type: repository
-                                              product_name: brakeman
-                                              product_config_name: brakeman-default
-                                              fail_on_severity: HIGH
-                                              repository_branch: <+codebase.branch>
-                                              repository_project: harnessrails
-                                          imagePullPolicy: Always
-                                      failureStrategies: []
-                                      when:
-                                          stageStatus: Failure
-                          - step:
-                                type: Run
-                                name: Setup DB
-                                identifier: Setup_DB
-                                spec:
-                                    connectorRef: org.Dockerhub
-                                    image: ruby:3.1.0
-                                    shell: Sh
-                                    command: |
-                                        bundle install --jobs 4 --retry 3
-                                        bundle exec rails db:create
-                                    envVariables:
-                                        RAILS_ENV: test
-                                        POSTGRES_USER: postgres
-                                        POSTGRES_PASSWORD: postgres
-                          - step:
-                                type: Run
-                                name: Migrate DB
-                                identifier: Migrate_DB
-                                spec:
-                                    connectorRef: org.Dockerhub
-                                    image: ruby:3.1.0
-                                    shell: Sh
-                                    command: |-
-                                        bundle install --jobs 4 --retry 3
-                                        bundle exec rails db:migrate
-                                    envVariables:
-                                        RAILS_ENV: test
-                                        POSTGRES_USER: postgres
-                                        POSTGRES_PASSWORD: postgres
-                          - step:
-                                type: Run
-                                name: Test
-                                identifier: Test
-                                spec:
-                                    connectorRef: org.Dockerhub
-                                    image: ruby:3.1.0
-                                    shell: Sh
-                                    command: |-
-                                        bundle install --jobs 4 --retry 3
-                                        bundle exec rake
-                                    envVariables:
-                                        RAILS_ENV: test
-                                        POSTGRES_USER: postgres
-                                        POSTGRES_PASSWORD: postgres
-                  sharedPaths:
-                      - /var/run
-              variables:
-                  - name: api_domain_name
-                    type: String
-                    value: https://api.sto.harness.io
-                  - name: runner_tag
-                    type: String
-                    value: dev
-    variables:
-        - name: defaultBranch
-          type: String
-          value: <+input>
+                        connectorRef: org.Dockerhub
+                        image: pipelinecomponents/rubocop:latest
+                        shell: Sh
+                        command: rubocop --format junit --out report.xml || true
+                        reports:
+                          type: JUnit
+                          spec:
+                            paths:
+                              - report.xml
+                      failureStrategies: []
+                  - step:
+                      type: Security
+                      name: Brakeman Scan
+                      identifier: Brakeman_Scan
+                      spec:
+                        privileged: true
+                        settings:
+                          policy_type: orchestratedScan
+                          scan_type: repository
+                          product_name: brakeman
+                          product_config_name: default
+                          repository_branch: <+codebase.branch>
+                          repository_project: harnessrails
+                        imagePullPolicy: Always
+                      failureStrategies: []
+                      when:
+                        stageStatus: Success
+              - step:
+                  type: Run
+                  name: Setup DB
+                  identifier: Setup_DB
+                  spec:
+                    connectorRef: org.Dockerhub
+                    image: ruby:3.1.0
+                    shell: Sh
+                    command: |
+                      bundle install --jobs 4 --retry 3
+                      bundle exec rails db:create
+                    envVariables:
+                      RAILS_ENV: test
+                      POSTGRES_USER: postgres
+                      POSTGRES_PASSWORD: postgres
+              - step:
+                  type: Run
+                  name: Migrate DB
+                  identifier: Migrate_DB
+                  spec:
+                    connectorRef: org.Dockerhub
+                    image: ruby:3.1.0
+                    shell: Sh
+                    command: |-
+                      bundle install --jobs 4 --retry 3
+                      bundle exec rails db:migrate
+                    envVariables:
+                      RAILS_ENV: test
+                      POSTGRES_USER: postgres
+                      POSTGRES_PASSWORD: postgres
+              - step:
+                  type: Run
+                  name: Test
+                  identifier: Test
+                  spec:
+                    connectorRef: org.Dockerhub
+                    image: ruby:3.1.0
+                    shell: Sh
+                    command: |-
+                      bundle install --jobs 4 --retry 3
+                      bundle exec rake
+                    envVariables:
+                      RAILS_ENV: test
+                      POSTGRES_USER: postgres
+                      POSTGRES_PASSWORD: postgres
+          sharedPaths:
+            - /var/run
+        variables:
+          - name: api_domain_name
+            type: String
+            value: https://api.sto.harness.io
+          - name: runner_tag
+            type: String
+            value: dev
+  variables:
+    - name: defaultBranch
+      type: String
+      value: <+input>
