@@ -149,5 +149,4 @@ pipeline:
                       POSTGRES_PASSWORD: postgres
           sharedPaths:
             - /var/run
-        variables: []
   variables: []
