@@ -96,7 +96,7 @@ pipeline:
                           scan_type: repository
                           product_name: brakeman
                           product_config_name: default
-                          repository_branch: <+codebase.branch>
+                          repository_branch: main
                           repository_project: harnessrails
                         imagePullPolicy: Always
                       failureStrategies: []
