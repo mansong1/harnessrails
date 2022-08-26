@@ -38,6 +38,9 @@ pipeline:
                   POSTGRES_USER: postgres
                   POSTGRES_PASSWORD: postgres
                   POSTGRES_DB: test
+                args:
+                  - "-cmax_connections=200"
+                  - "-cshared_buffers=256MB"
                 imagePullPolicy: Always
             - identifier: DIND
               name: DIND
